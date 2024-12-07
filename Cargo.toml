@@ -8,3 +8,6 @@ log = "0.4.22"
 salvo = { version = "0.74.2", features = ["serve-static"] }
 tokio = { version = "1.42.0", features = ["full", "tracing"] }
 tracing-subscriber = "0.3.19"
+
+[build-dependencies]
+log = "0.4.22"
