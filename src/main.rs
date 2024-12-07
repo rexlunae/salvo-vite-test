@@ -1,7 +1,7 @@
 use salvo::prelude::*;
 use salvo::serve_static::StaticDir;
 
-use log::{info, debug};
+use log::{info};
 
 #[handler]
 async fn hello() -> &'static str {
