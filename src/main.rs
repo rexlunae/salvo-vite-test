@@ -18,7 +18,15 @@ async fn main() {
     let router = Router::new()
         .push(
             Router::with_path("/hello").get(hello)
-        )
+        );
+
+    let doc = OpenApi::new("test api", "0.0.1").merge_router(&router);
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+
+    // The frontend route will process anything not previously captured, so it has to be added last.
+    let router = router
         .push(
             Router::with_path("<**path>").get(
                 StaticDir::new([
@@ -29,11 +37,6 @@ async fn main() {
 
             )
         );
-
-    let doc = OpenApi::new("test api", "0.0.1").merge_router(&router);
-    let router = router
-        .push(doc.into_router("/api-doc/openapi.json"))
-        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 
     let service = Service::new(router).hoop(Logger::new());
 
