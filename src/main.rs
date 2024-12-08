@@ -13,6 +13,8 @@ async fn hello() -> &'static str {
 #[tokio::main]
 async fn main() {
     let bind = "127.0.0.1:5800";
+    let swagger_ui_path = "swagger-ui";
+
     tracing_subscriber::fmt().init();
 
     let router = Router::new()
@@ -20,10 +22,11 @@ async fn main() {
             Router::with_path("/hello").get(hello)
         );
 
+    info!("API documentation at http://{}/{}", bind, swagger_ui_path);
     let doc = OpenApi::new("test api", "0.0.1").merge_router(&router);
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))
-        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router(swagger_ui_path));
 
     // The frontend route will process anything not previously captured, so it has to be added last.
     let router = router
