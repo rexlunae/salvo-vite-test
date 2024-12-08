@@ -1,4 +1,5 @@
 use salvo::prelude::*;
+use salvo::logging::Logger;
 use salvo::serve_static::StaticDir;
 
 use log::{info};
@@ -20,9 +21,11 @@ async fn main() {
         .defaults("index.html")
         .auto_list(true),
     );
+    let service = Service::new(router).hoop(Logger::new());
+
 
     //let router = Router::new().get(hello);
     info!("Binding on {}", bind);
     let acceptor = TcpListener::new(bind).bind().await;
-    Server::new(acceptor).serve(router).await;
+    Server::new(acceptor).serve(service).await;
 }
