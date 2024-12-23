@@ -5,9 +5,10 @@ use salvo::serve_static::StaticDir;
 
 use log::{info};
 
-#[handler]
-async fn hello() -> &'static str {
-    "Hello World"
+/// A sample API endpoint.
+#[endpoint]
+async fn hello_api(name: QueryParam<String, false>) -> String {
+    format!("Hello, {}!", name.as_deref().unwrap_or("World"))
 }
 
 #[tokio::main]
@@ -19,7 +20,7 @@ async fn main() {
 
     let router = Router::new()
         .push(
-            Router::with_path("/hello").get(hello)
+            Router::with_path("/api/hello").get(hello_api)
         );
 
     info!("API documentation at http://{}/{}", bind, swagger_ui_path);
